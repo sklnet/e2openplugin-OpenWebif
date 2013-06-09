@@ -223,6 +223,8 @@ class BaseController(resource.Resource):
 			ret["remote"] = "ixussone"
 		elif getBoxType() == 'ixusszero':
 			ret["remote"] = "ixusszero"
+		elif ret["box"] == "spark" or ret["box"] == "spark7162":
+			ret["remote"] = "spark"
 		else:
 			ret["remote"] = "dmm"
 

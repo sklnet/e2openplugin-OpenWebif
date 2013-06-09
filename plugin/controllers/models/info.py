@@ -16,7 +16,7 @@ from RecordTimer import parseEvent
 from Screens.Standby import inStandby
 from Tools.Directories import fileExists, pathExists
 from time import time, localtime, strftime
-from enigma import eDVBVolumecontrol, eServiceCenter, getDistro
+from enigma import eDVBVolumecontrol, eServiceCenter
 
 import os
 import sys
@@ -162,6 +162,8 @@ def getInfo():
 	else:
 		file = open("/proc/stb/info/model")
 		model = file.read().strip().lower()
+ 		if model == "spark" or model == "spark7162":
+		    brand = "Spark"
 		file.close()
 
 	info['brand'] = brand
