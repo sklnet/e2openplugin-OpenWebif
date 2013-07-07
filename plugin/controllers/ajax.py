@@ -80,8 +80,12 @@ class AjaxController(BaseController):
 			model = "et9x00"
 		elif model == "et5000" or model == "et6000":
 			model = "et5x00"
+		elif model == "et4000":
+			model = "et4x00"
 		elif model == "xp1000":
 			model = "xp1000"
+		elif model == "xp1000s":
+			model = "sf8"
 		elif model == "odinm9":
 			model = "odinm9"
 		elif model == "odinm7":
@@ -90,6 +94,10 @@ class AjaxController(BaseController):
 			model = "e3hd"
 		elif model == "MixOs F5":
 			model = "ebox5000"
+		elif model == "MixOs F5mini":
+			model = "ebox5100"
+		elif model == "MixOs F7":
+			model = "ebox7358"
 		elif model == "IOS-100HD":
 			model = "ios100hd"
 		elif model == "IOS-200HD":
@@ -177,6 +185,31 @@ class AjaxController(BaseController):
 		return getConfigs(section)
 
 	def P_multiepg(self, request):
+		bouq = getBouquets("tv")
+		if "bref" not in request.args.keys():
+			bref = bouq['bouquets'][0][0]
+		else:
+			bref = request.args["bref"][0]
+
+		endtime = 1440
+				
+		begintime = -1
+		day = 0
+		if "day" in request.args.keys():
+			try:
+				day = int(request.args["day"][0])
+				now = localtime()
+				begintime = mktime( (now.tm_year, now.tm_mon, now.tm_mday+day, 6, 0, 0, -1, -1, -1) )
+			except Exception, e:
+				pass
+		
+		epg = getMultiEpg(self, bref, begintime, endtime)
+		epg['bouquets'] = bouq['bouquets']
+		epg['bref'] = bref
+		epg['day'] = day
+		
+		return epg
+	def P_multiepg2(self, request):
 		bouq = getBouquets("tv")
 		if "bref" not in request.args.keys():
 			bref = bouq['bouquets'][0][0]

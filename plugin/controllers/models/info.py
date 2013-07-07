@@ -22,7 +22,7 @@ import os
 import sys
 import time
 
-OPENWEBIFVER = "OWIF 0.1.5"
+OPENWEBIFVER = "OWIF 0.1.7"
 
 def getOpenWebifVer():
 	return OPENWEBIFVER
@@ -110,7 +110,7 @@ def getInfo():
 				model = "et9x00"
 		elif model.startswith("ini"):
 			if model.endswith("sv"):
-				brand = "Miraclebox"
+				brand = "MiracleBox"
 				if model == "ini-5000sv":
 					model = "Premium Twin"
 				elif model == "ini-1000sv":
@@ -121,8 +121,11 @@ def getInfo():
 				brand = "Sezam"
 			else:
 				brand = "Venton"
-		elif model.startswith("xp"):
+		elif model == "xp1000":
 			brand = "XP-Series"
+		elif model == "xp1000s":
+			brand = "Octagon"
+			model = "SF8 HD"
 		elif model == "odinm9":
 			brand = "Odin-Series"
 		elif model == "odinm7":
@@ -137,15 +140,21 @@ def getInfo():
 				model = "Class E"
 			else:
 				brand = "E3-Series"
-		elif model.startswith("ebox"):
+		elif model == "ebox5000":
 			brand = "MixOs-Series"
 			model = "MixOs F5"
+		elif model == "ebox5100":
+			brand = "MixOs-Series"
+			model = "MixOs F5mini"
+		elif model == "ebox7358":
+			brand = "MixOs-Series"
+			model = "MixOs F7"
 		elif model.startswith("ixuss"):
 			brand = "Ixuss-Series"
 			chipset = "BCM7405"
 	elif fileExists("/proc/stb/info/azmodel"):
 		brand = "AZBOX"
-		file = open("/proc/stb/info/azmodel")
+		file = open("/proc/stb/info/model")
 		model = file.read().strip().lower()
 		file.close()
 		if model == "me":

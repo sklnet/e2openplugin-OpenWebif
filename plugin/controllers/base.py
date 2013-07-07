@@ -155,7 +155,7 @@ class BaseController(resource.Resource):
 				else:
 					model = 'gb800solo'
 		elif fileExists("/proc/stb/info/azmodel"):
-			file = open("/proc/stb/info/azmodel")
+			file = open("/proc/stb/info/model")
 			model = file.read().strip().lower()
 			file.close()
 		elif fileExists("/proc/stb/info/vumodel"):
@@ -187,8 +187,8 @@ class BaseController(resource.Resource):
 			ret["remote"] = "et9x00"
 		elif ret["box"] in ("et5x00", "et5000", "et6000"):
 			ret["remote"] = "et5x00"
-		elif ret["box"] == "et4000":
-			ret["remote"] = "et4000"
+		elif ret["box"] in ("et4x00", "et4000"):
+			ret["remote"] = "et4x00"
 		elif ret["box"] == "et6500":
 			ret["remote"] = "et6500"
 		elif ret["box"] in ("gb800solo", "gb800se", "gb800ue", "quad"):
@@ -215,7 +215,7 @@ class BaseController(resource.Resource):
 			ret["remote"] = "odinm7"
 		elif ret["box"] == "e3hd":
 			ret["remote"] = "e3hd"
-		elif ret["box"] == "ebox5000":
+		elif ret["box"] in ("ebox5000", "ebox5100", "ebox7358"):
 			ret["remote"] = "ebox5000"
 		elif getBoxType() == 'ixusssone':
 			ret["remote"] = "ixussone"
