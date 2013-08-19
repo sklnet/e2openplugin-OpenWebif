@@ -92,6 +92,8 @@ class AjaxController(BaseController):
 			model = "odinm7"
 		elif model == "e3hd":
 			model = "e3hd"
+		elif getBoxType() == 'odinm6':
+			model = "starsatlx"
 		elif model == "MixOs F5":
 			model = "ebox5000"
 		elif model == "MixOs F5mini":
@@ -104,6 +106,10 @@ class AjaxController(BaseController):
 			model = "ios200hd"
 		elif model == "IOS-300HD":
 			model = "ios300hd"
+		elif model == "Optimuss-OS1":
+			model = "optimussos1"
+		elif model == "Optimuss-OS2":
+			model = "optimussos2"
 		elif model == "TM-TWIN-OE":
 			model = "tmtwin"
 		elif model == "TM-2T-OE":
@@ -123,7 +129,14 @@ class AjaxController(BaseController):
 		elif model == 'Premium Mini':
 			model = "ini-1000sv"
 		elif model == 'Xpeed LX':
-			model = "ini-1000de"
+			if fileExists("/proc/stb/fp/version"):
+				file = open("/proc/stb/fp/version")
+				version = file.read().strip().lower()
+				file.close()
+			if version.startswith('2'):
+				model = "xpeedlx2"
+			else:
+				model = "xpeedlx1"
 		if fileExists(getPublicPath("/images/boxes/" + model + ".jpg")):
 			info["boximage"] = model + ".jpg"
 		else:
@@ -148,7 +161,12 @@ class AjaxController(BaseController):
 		elif fileExists("/proc/stb/info/gbmodel"):
 			box['brand'] = "gigablue"
 		elif fileExists("/proc/stb/info/hwmodel"):
-			box['brand'] = "technomate"
+			if getBoxType().startswith('opti'):
+				box['brand'] = "edision"
+			elif getBoxType().startswith('iqon'):
+				box['brand'] = "iqon"
+			else:
+				box['brand'] = "technomate"
 		return { "box": box }
 		
 	def P_powerstate(self, request):

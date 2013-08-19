@@ -179,6 +179,8 @@ class BaseController(resource.Resource):
 			ret["remote"] = "tm_nano"
 		elif ret["box"] in ("ios100hd", "ios200hd", "ios300hd"):
 			ret["remote"] = "iqon"
+		elif ret["box"] in ("optimussos1", "optimussos2"):
+			ret["remote"] = "optimuss"
 		elif ret["box"] in ("solo", "duo", "uno", "solo2", "duo2"):
 			ret["remote"] = "vu_normal"
 		elif ret["box"] == "ultimo":
@@ -213,6 +215,8 @@ class BaseController(resource.Resource):
 			ret["remote"] = "xp1000"
 		elif ret["box"] == "odinm9":
 			ret["remote"] = "odinm9"
+		elif getBoxType() == 'odinm6':
+			ret["remote"] = "starsatlx"
 		elif ret["box"] == "odinm7":
 			ret["remote"] = "odinm7"
 		elif ret["box"] == "e3hd":
