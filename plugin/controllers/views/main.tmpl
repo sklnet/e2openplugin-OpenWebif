@@ -8,6 +8,7 @@
 <script type="text/javascript" src="/js/jquery-1.6.2.min.js"></script>
 <script type="text/javascript" src="/js/jquery-ui-1.8.18.custom.min.js"></script>
 <script type="text/javascript" src="/js/openwebif.js"></script>
+<script type="text/javascript" src="/js/transcoding.js"></script>
 
 <title>Open Webif</title>
 </head>
@@ -145,10 +146,10 @@
 			</div>
 			#end def
 			
-			#def configMenu
+			#def extrasMenu
 			<ul>
-				#for $section in $configsections
-					<li><a href='#' onclick="load_maincontent('ajax/config?section=$section["key"]'); return false;">$section["description"]</a></li>
+				#for $extra in $extras
+					<li><a href='#' onclick="load_maincontent('$extra["key"]'); return false;">$extra["description"]</a></li>
 				#end for
 			</ul>
 			#end def
@@ -160,7 +161,7 @@
 				$menu("Remote", "remote", $remoteMenu)
 				$menu("Info", "info", $infoMenu)
 				$menu("Stream", "stream", $streamMenu)
-				$menu("Settings", "config", $configMenu)
+				$menu("Extras", "extras", $extrasMenu)
 				$menu("Epg Search", "search", $searchMenu)
 			</div>
 			<div id="remotecontainer" style="display: none;">
@@ -196,5 +197,10 @@
 			<div id="footer"><h3>&nbsp;&nbsp;<a href="https://github.com/E2OpenPlugins">E2OpenPlugins</a> | <a href="http://www.vuplus-community.net">Black Hole</a> | <a href="http://openpli.org">OpenPli</a> | <a href="http://forum.sifteam.eu">Sif</a> | <a href="http://www.vuplus-support.org">Vti</a> | <a href="http://www.world-of-satellite.com">ViX</a> | <a href="http://www.opena.tv">openATV</a> | <a href="http://www.egami-image.com">EGAMI</a></h3></div>
 		</div>
 	</div>
+	<form name="portForm" action="/web/stream.m3u" method="GET" target="_blank">
+		<input type="hidden" name="ref">
+		<input type="hidden" name="name">
+		<input type="hidden" name="device">
+	</form>
 </body>
 </html>

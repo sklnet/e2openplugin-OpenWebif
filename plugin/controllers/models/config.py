@@ -1,20 +1,22 @@
 from enigma import eEnv
 from Components.SystemInfo import SystemInfo
 from Components.config import config
+from Tools.Directories import resolveFilename, SCOPE_CURRENT_PLUGIN, fileExists
+from os import path, listdir
 import xml.etree.cElementTree
 
 def addCollapsedMenu(name):
 	tags = config.OpenWebif.webcache.collapsedmenus.value.split("|")
 	if name not in tags:
 		tags.append(name)
-		
+
 	config.OpenWebif.webcache.collapsedmenus.value = "|".join(tags).strip("|")
 	config.OpenWebif.webcache.collapsedmenus.save()
 	
 	return {
 		"result": True
 	}
-	
+
 def removeCollapsedMenu(name):
 	tags = config.OpenWebif.webcache.collapsedmenus.value.split("|")
 	if name in tags:
@@ -32,33 +34,33 @@ def getCollapsedMenus():
 		"result": True,
 		"collapsed": config.OpenWebif.webcache.collapsedmenus.value.split("|")
 	}
-	
+
 def setRemoteGrabScreenshot(value):
 	config.OpenWebif.webcache.remotegrabscreenshot.value = value
 	config.OpenWebif.webcache.remotegrabscreenshot.save()
 	return {
 		"result": True
 	}
-	
+
 def getRemoteGrabScreenshot():
 	return {
 		"result": True,
 		"remotegrabscreenshot": config.OpenWebif.webcache.remotegrabscreenshot.value
 	}
-	
+
 def setZapStream(value):
 	config.OpenWebif.webcache.zapstream.value = value
 	config.OpenWebif.webcache.zapstream.save()
 	return {
 		"result": True
 	}
-	
+
 def getZapStream():
 	return {
 		"result": True,
 		"zapstream": config.OpenWebif.webcache.zapstream.value
 	}
-	
+
 def getJsonFromConfig(cnf):
 	if cnf.__class__.__name__ == "ConfigSelection" or cnf.__class__.__name__ == "ConfigSelectionNumber":
 		if type(cnf.choices.choices) == dict:
@@ -92,11 +94,18 @@ def getJsonFromConfig(cnf):
 			"current": cnf.value
 		}
 
-	elif cnf.__class__.__name__ == "ConfigNumber" or cnf.__class__.__name__ == "ConfigInteger":
+	elif cnf.__class__.__name__ == "ConfigNumber":
 		return {
 			"result": True,
 			"type": "number",
 			"current": cnf.value
+		}
+	elif cnf.__class__.__name__ == "ConfigInteger":
+		return {
+			"result": True,
+			"type": "number",
+			"current": cnf.value,
+			"limits": (cnf.limits[0][0], cnf.limits[0][1])
 		}
 
 	elif cnf.__class__.__name__ == "ConfigText":
@@ -111,7 +120,7 @@ def getJsonFromConfig(cnf):
 		"result": False,
 		"type": "unknown"
 	}
-		
+
 def saveConfig(path, value):
 	try:
 		cnf = eval(path)
@@ -124,8 +133,17 @@ def saveConfig(path, value):
 			else:
 				values.append(int(value))
 			cnf.value = values
-		elif cnf.__class__.__name__ == "ConfigNumber" or cnf.__class__.__name__ == "ConfigInteger":
+		elif cnf.__class__.__name__ == "ConfigNumber":
 			cnf.value = int(value)
+		elif  cnf.__class__.__name__ == "ConfigInteger":
+			cnf_min = int(cnf.limits[0][0])
+			cnf_max = int(cnf.limits[0][1])
+			cnf_value = int(value)
+			if cnf_value < cnf_min:
+				cnf_value = cnf_min
+			elif cnf_value > cnf_max:
+				cnf_value = cnf_max
+			cnf.value = cnf_value
 		else:
 			cnf.value = value
 		cnf.save()
@@ -138,93 +156,41 @@ def saveConfig(path, value):
 	return {
 		"result": True
 	}
-		
+
 def getConfigs(key):
 	configs = []
-	title = ""
-	
-	setupfile = file(eEnv.resolve('${datadir}/enigma2/setup.xml'), 'r')
-	setupdom = xml.etree.cElementTree.parse(setupfile)
-	setupfile.close()
-	xmldata = setupdom.getroot()
-	for section in xmldata.findall("setup"):
-		if section.get("key") != key:
-			continue
-			
-		for entry in section:
-			if entry.tag == "item":
-				requires = entry.get("requires")
-				if requires and requires.startswith('config.'):
-					item = eval(requires or "");
-					if item.value and not item.value == "0":
-						SystemInfo[requires] = True
-					else:
-						SystemInfo[requires] = False
-				if requires and not SystemInfo.get(requires, False):
-					continue;
-				
-				if int(entry.get("level", 0)) > config.usage.setup_level.index:
-					continue
-				
-				try:
-					configs.append({
-						"description": entry.get("text", ""),
+	title = None
+	if not len(configfiles.sections):
+		configfiles.getConfigs()
+	if key in configfiles.section_config:
+		config_entries = configfiles.section_config[key][1]
+		title = configfiles.section_config[key][0]
+	if config_entries:
+		for entry in config_entries:
+			try:
+				data = getJsonFromConfig(eval(entry.text or ""))
+				text = entry.get("text", "")
+				if "limits" in data:
+					text = "%s (%d - %d)" % (text, data["limits"][0], data["limits"][1])
+				configs.append({
+						"description": text,
 						"path": entry.text or "",
-						"data": getJsonFromConfig(eval(entry.text or ""))
-					})		
-				except Exception, e:
-					pass
-				
-		title = section.get("title", "")
-		break
-		
+						"data": data
+					})
+			except Exception, e:
+				pass
 	return {
 		"result": True,
 		"configs": configs,
 		"title": title
 	}
-	
+
 def getConfigsSections():
-	allowedsections = ["usage", "recording", "subtitlesetup", "autolanguagesetup", "avsetup", "harddisk", "keyboard", "timezone", "time", "osdsetup", "epgsetup", "lcd", "remotesetup", "softcamsetup", "logs", "timeshift"]
-	sections = []
-	
-	setupfile = file(eEnv.resolve('${datadir}/enigma2/setup.xml'), 'r')
-	setupdom = xml.etree.cElementTree.parse(setupfile)
-	setupfile.close()
-	xmldata = setupdom.getroot()
-	for section in xmldata.findall("setup"):
-		key = section.get("key")
-		if key not in allowedsections:
-			continue
-		
-		count = 0
-		for entry in section:
-			if entry.tag == "item":
-				requires = entry.get("requires")
-				if requires and requires.startswith('config.'):
-					item = eval(requires or "");
-					if item.value and not item.value == "0":
-						SystemInfo[requires] = True
-					else:
-						SystemInfo[requires] = False
-				if requires and not SystemInfo.get(requires, False):
-					continue;
-					
-				if int(entry.get("level", 0)) > config.usage.setup_level.index:
-					continue
-					
-				count += 1
-				
-		if count > 0:
-			sections.append({
-				"key": key,
-				"description": section.get("title")
-			})
-			
-	sections = sorted(sections, key=lambda k: k['description']) 
+	if not len(configfiles.sections):
+		configfiles.parseConfigFiles()
 	return {
 		"result": True,
-		"sections": sections
+		"sections": configfiles.sections
 	}
 
 def privSettingValues(prefix, top, result):
@@ -245,3 +211,61 @@ def getSettings():
 		"settings": configkeyval
 	}
 
+class ConfigFiles:
+	def __init__(self):
+		self.setupfiles = []
+		self.sections = []
+		self.section_config = {}
+		self.allowedsections = ["usage", "recording", "subtitlesetup", "autolanguagesetup", "avsetup", "harddisk", "keyboard", "timezone", "time", "osdsetup", "epgsetup", "lcd", "remotesetup", "softcamsetup", "logs", "timeshift"]
+		self.getConfigFiles()
+
+	def getConfigFiles(self):
+		setupfiles = [eEnv.resolve('${datadir}/enigma2/setup.xml')]
+		locations = ('SystemPlugins', 'Extensions')
+		libdir = eEnv.resolve('${libdir}')
+		for location in locations:
+			plugins = listdir(('%s/enigma2/python/Plugins/%s' % (libdir,location)))
+			for plugin in plugins:
+				setupfiles.append(('%s/enigma2/python/Plugins/%s/%s/setup.xml' % (libdir, location, plugin)))
+		for setupfile in setupfiles:
+			if path.exists(setupfile):
+				self.setupfiles.append(setupfile)
+
+	def parseConfigFiles(self):
+		sections = []
+		for setupfile in self.setupfiles:
+			print "[OpenWebif] loading configuration file :", setupfile
+			setupfile = file(setupfile, 'r')
+			setupdom = xml.etree.cElementTree.parse(setupfile)
+			setupfile.close()
+			xmldata = setupdom.getroot()
+			for section in xmldata.findall("setup"):
+				configs = []
+				key = section.get("key")
+				if key not in self.allowedsections:
+					showOpenWebIF = section.get("showOpenWebIF")
+					if showOpenWebIF == "1":
+						self.allowedsections.append(key)
+					else:
+						continue
+				print "[OpenWebif] loading configuration section :", key
+				for entry in section:
+					if entry.tag == "item":
+						requires = entry.get("requires")
+						if requires and not SystemInfo.get(requires, False):
+							continue;
+							
+						if int(entry.get("level", 0)) > config.usage.setup_level.index:
+							continue
+						configs.append(entry)
+				if len(configs):
+					sections.append({
+						"key": key,
+						"description": section.get("title")
+					})
+					title = section.get("title", "")
+					self.section_config[key] = (title, configs)
+		sections = sorted(sections, key=lambda k: k['description'])
+		self.sections = sections
+
+configfiles = ConfigFiles()

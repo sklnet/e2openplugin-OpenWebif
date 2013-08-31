@@ -193,7 +193,7 @@ class BaseController(resource.Resource):
 			ret["remote"] = "et4x00"
 		elif ret["box"] == "et6500":
 			ret["remote"] = "et6500"
-		elif ret["box"] in ("gb800solo", "gb800se", "gb800ue", "quad"):
+		elif ret["box"] in ("gb800solo", "gb800se", "gb800ue", "gbquad"):
 			ret["remote"] = "gigablue"
 		elif ret["box"] in ("me", "minime"):
 			ret["remote"] = "me"
@@ -233,6 +233,25 @@ class BaseController(resource.Resource):
 			ret["remote"] = "spark"
 		else:
 			ret["remote"] = "dmm"
+		extras = []
+		extras.append({ 'key': 'ajax/settings','description': 'Settings'})
 
+# TODO AutoTimer,Epgrefresh,BouquetEditor as Webinterface
+		
+#		try:
+#			from Plugins.Extensions.AutoTimer.AutoTimer import AutoTimer
+#			extras.append({ 'key': 'ajax/xxx','description': 'AutoTimer'})
+#		except ImportError:
+		
+#		try:
+#			from Plugins.Extensions.WebBouquetEditor.WebComponents.Sources.BouquetEditor import BouquetEditor
+#			extras.append({ 'key': 'ajax/xxx','description': 'BouquetEditor'})
+#		except ImportError:
+		
+#		try:
+#			from Plugins.Extensions.EPGRefresh.EPGRefresh import epgrefresh
+#			extras.append({ 'key': 'ajax/xxx','description': 'EPGRefresh'})
+#		except ImportError:
+
+		ret['extras'] = extras
 		return ret
-
