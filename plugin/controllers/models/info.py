@@ -130,6 +130,8 @@ def getInfo():
 				brand = "Golden Interstar"
 				if model == "ini-1000de":
 					model = "Xpeed LX"
+				elif model == "ini-9000de":
+					model = "Xpeed LX3"
 				else:
 					model
 			elif model.endswith("ru"):
@@ -288,7 +290,10 @@ def getFrontendStatus(session):
 	inf['agc'] = ""
 	inf['ber'] = ""
 
-	feinfo = session.nav.getCurrentService().frontendInfo()
+	service = session.nav.getCurrentService()
+	if service is None:
+		return inf
+	feinfo = service.frontendInfo()
 	frontendData = feinfo and feinfo.getAll(True)
 
 	if frontendData is not None:
