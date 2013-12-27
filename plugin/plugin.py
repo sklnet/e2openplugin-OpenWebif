@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 ##############################################################################
 #                         <<< OpenWebif >>>                                  #
 #                                                                            #
@@ -24,12 +26,14 @@ from Components.config import config, getConfigListEntry, ConfigSubsection, Conf
 
 from httpserver import HttpdStart, HttpdStop, HttpdRestart
 
+from __init__ import _
+
 config.OpenWebif = ConfigSubsection()
 config.OpenWebif.enabled = ConfigYesNo(default=True)
 # Use temporary port 8088 to avoid conflict with Webinterface
 config.OpenWebif.port = ConfigInteger(default = 80, limits=(1, 65535) )
 config.OpenWebif.streamport = ConfigInteger(default = 8001, limits=(1, 65535) )
-config.OpenWebif.auth = ConfigYesNo(default=True)
+config.OpenWebif.auth = ConfigYesNo(default=False)
 config.OpenWebif.xbmcservices = ConfigYesNo(default=False)
 config.OpenWebif.webcache = ConfigSubsection()
 # FIXME: anything better than a ConfigText?
@@ -63,7 +67,7 @@ class OpenWebifConfig(Screen, ConfigListScreen):
 		ConfigListScreen.__init__(self, self.list)
 		self["key_red"] = Label(_("Cancel"))
 		self["key_green"] = Label(_("Save"))
-		self["lab1"] = Label("OpenWebif url: http://yourip:port")
+		self["lab1"] = Label(_("OpenWebif url: http://yourip:port"))
 		
 		self["actions"] = ActionMap(["WizardActions", "ColorActions"],
 		{
@@ -84,6 +88,11 @@ class OpenWebifConfig(Screen, ConfigListScreen):
 	
 		self["config"].list = self.list
 		self["config"].l.setList(self.list)
+
+		self.onLayoutFinish.append(self.setWindowTitle)
+
+	def setWindowTitle(self):
+		self.setTitle(_("OpenWebif Configuration"))
 
 	def keySave(self):
 		for x in self["config"].list:

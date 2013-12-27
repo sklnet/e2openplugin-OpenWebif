@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 ##############################################################################
 #                        2011 E2OpenPlugins                                  #
 #                                                                            #
@@ -7,8 +9,13 @@
 #                                                                            #
 ##############################################################################
 
-from Tools.Directories import fileExists
-from enigma import getBoxType
+from Plugins.Extensions.OpenWebif.__init__ import _
+
+from Tools.Directories import fileExists, resolveFilename, SCOPE_PLUGINS
+try:
+	from enigma import getBoxType, getMachineName
+except:
+	pass
 
 from twisted.web import server, http, static, resource, error
 from Cheetah.Template import Template
@@ -152,6 +159,8 @@ class BaseController(resource.Resource):
 					file = open("/proc/stb/info/gbmodel")
 					model = file.read().strip().lower()
 					file.close()
+					if model == "quad":
+						model = "gbquad"
 				else:
 					model = 'gb800solo'
 		elif fileExists("/proc/stb/info/azmodel"):
@@ -170,13 +179,13 @@ class BaseController(resource.Resource):
 		ret['box'] = model
 
 		if ret["box"] == "tmtwinoe":
-			ret["remote"] = "tm_twin"
+			ret["remote"] = "tm"
 		elif ret["box"] == "tm2toe":
-			ret["remote"] = "tm_2t"
+			ret["remote"] = "tm"
 		elif ret["box"] == "tmsingle":
-			ret["remote"] = "tm_2t"
+			ret["remote"] = "tm"
 		elif ret["box"] == "tmnanooe":
-			ret["remote"] = "tm_nano"
+			ret["remote"] = "tm"
 		elif ret["box"] in ("ios100hd", "ios200hd", "ios300hd"):
 			ret["remote"] = "iqon"
 		elif ret["box"] in ("optimussos1", "optimussos2"):
@@ -193,7 +202,7 @@ class BaseController(resource.Resource):
 			ret["remote"] = "et4x00"
 		elif ret["box"] == "et6500":
 			ret["remote"] = "et6500"
-		elif ret["box"] in ("gb800solo", "gb800se", "gb800ue", "gbquad", "gb800seplus", "gb800ueplus"):
+		elif ret["box"] in ("gb800solo", "gb800se", "gb800ue", "gbquad", "gb800seplus", "gb800ueplus", "gbquadplus"):
 			ret["remote"] = "gigablue"
 		elif ret["box"] in ("me", "minime"):
 			ret["remote"] = "me"
@@ -203,7 +212,7 @@ class BaseController(resource.Resource):
 			ret["remote"] = "elite"
 		elif ret["box"] in ("ini-1000de", "ini-9000de"):
 			ret["remote"] = "xpeedlx"
-		elif ret["box"] in ("ini-1000", "ini-1000ru"):
+		elif ret["box"] in ("ini-1000", "ini-1000ru", "ini-9000ru"):
 			ret["remote"] = "ini-1000"
 		elif ret["box"] in ("ini-1000sv", "ini-5000sv"):
 			ret["remote"] = "miraclebox"
@@ -211,11 +220,11 @@ class BaseController(resource.Resource):
 			ret["remote"] = "ini-3000"
 		elif ret["box"] in ("ini-7012", "ini-7000", "ini-5000", "ini-5000ru"):
 			ret["remote"] = "ini-7000"
-		elif ret["box"] == "xp1000":
+		elif ret["box"] in ("xp1000", "xp1000s"):
 			ret["remote"] = "xp1000"
 		elif ret["box"] == "odinm9":
 			ret["remote"] = "odinm9"
-		elif getBoxType() == 'odinm6':
+		elif getBoxType() == 'odinm6' or getMachineName() == 'AX-Odin':
 			ret["remote"] = "starsatlx"
 		elif ret["box"] == "odinm7":
 			ret["remote"] = "odinm7"
@@ -229,12 +238,14 @@ class BaseController(resource.Resource):
 			ret["remote"] = "ixussone"
 		elif getBoxType() == 'ixusszero':
 			ret["remote"] = "ixusszero"
-		elif ret["box"] == "spark" or ret["box"] == "spark7162":
+		elif ret["box"] in ("spark", "spark7162"):
 			ret["remote"] = "spark"
 		else:
 			ret["remote"] = "dmm"
 		extras = []
-		extras.append({ 'key': 'ajax/settings','description': 'Settings'})
+		extras.append({ 'key': 'ajax/settings','description': _("Settings")})
+		if fileExists(resolveFilename(SCOPE_PLUGINS, "Extensions/LCD4linux/WebSite.pyo")):
+			extras.append({ 'key': 'lcd4linux/config','description': _("LCD4Linux Setup")})
 
 # TODO AutoTimer,Epgrefresh,BouquetEditor as Webinterface
 		
@@ -254,4 +265,5 @@ class BaseController(resource.Resource):
 #		except ImportError:
 
 		ret['extras'] = extras
+
 		return ret

@@ -1,0 +1,685 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: OpenWebif\n"
+"POT-Creation-Date: 2013-12-15 12:19+0100\n"
+"PO-Revision-Date: \n"
+"Last-Translator: blzr <blzr@o2.pl>\n"
+"Language-Team: \n"
+"Language: pl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.5.4\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-SearchPath-0: ../plugin\n"
+
+msgid "Cancel"
+msgstr "Anuluj"
+
+msgid "Save"
+msgstr "Zapisz"
+
+msgid "OpenWebif url: http://yourip:port"
+msgstr "Adres OpenWebif:  http://ip_tunera:port"
+
+msgid "OpenWebInterface Enabled"
+msgstr "OpenWebif włączony"
+
+msgid "Http port"
+msgstr "Port HTTP"
+
+msgid "Enable Http Authentication"
+msgstr "Włącz uwierzytelnianie HTTP"
+
+msgid "Enable Https"
+msgstr "Włącz dostęp przez HTTPS"
+
+msgid "Https port"
+msgstr "Port HTTPS"
+
+msgid "Smart services renaming for XBMC"
+msgstr "Zmiana nazw kanałów dla XBMC"
+
+msgid "Enable Parental Control"
+msgstr "Włącz kontrolę rodzicielską"
+
+msgid "Add service name to stream information"
+msgstr "Dodaj nazwę kanału do info strumienia"
+
+msgid "OpenWebif Configuration"
+msgstr "Konfiguracja OpenWebif"
+
+msgid "Mo"
+msgstr "Pon"
+
+msgid "Tu"
+msgstr "Wt"
+
+msgid "We"
+msgstr "Śr"
+
+msgid "Th"
+msgstr "Czw"
+
+msgid "Fr"
+msgstr "Pią"
+
+msgid "Sa"
+msgstr "Sob"
+
+msgid "Su"
+msgstr "Nie"
+
+msgid "Sun"
+msgstr "Nie"
+
+msgid "Mon"
+msgstr "Pon"
+
+msgid "Tue"
+msgstr "Wt"
+
+msgid "Wed"
+msgstr "Śr"
+
+msgid "Thu"
+msgstr "Czw"
+
+msgid "Fri"
+msgstr "Pią"
+
+msgid "Sat"
+msgstr "Sob"
+
+msgid "Monday"
+msgstr "Poniedziałek"
+
+msgid "Tuesday"
+msgstr "Wtorek"
+
+msgid "Wednesday"
+msgstr "Środa"
+
+msgid "Thursday"
+msgstr "Czwartek"
+
+msgid "Friday"
+msgstr "Piątek"
+
+msgid "Saturday"
+msgstr "Sobota"
+
+msgid "Sunday"
+msgstr "Niedziela"
+
+msgid "January"
+msgstr "Styczeń"
+
+msgid "February"
+msgstr "Luty"
+
+msgid "March"
+msgstr "Marzec"
+
+msgid "April"
+msgstr "Kwiecień"
+
+msgid "May"
+msgstr "Maj"
+
+msgid "June"
+msgstr "Czerwiec"
+
+msgid "July"
+msgstr "Lipiec"
+
+msgid "August"
+msgstr "Sierpień"
+
+msgid "September"
+msgstr "Wrzesień"
+
+msgid "October"
+msgstr "Październik"
+
+msgid "November"
+msgstr "Listopad"
+
+msgid "December"
+msgstr "Grudzień"
+
+msgid "About"
+msgstr "O pluginie"
+
+msgid "Add Timer"
+msgstr "Dodaj timer"
+
+msgid "After Event"
+msgstr "Po wydarzeniu"
+
+msgid "AGC"
+msgstr ""
+
+msgid "All"
+msgstr "Wszystko"
+
+msgid "All Channels"
+msgstr "Wszystkie kanały"
+
+msgid "Authors"
+msgstr "Autorzy"
+
+msgid "Auto"
+msgstr ""
+
+msgid "Back"
+msgstr "Wróć"
+
+msgid "Begin"
+msgstr "Początek"
+
+msgid "BER"
+msgstr ""
+
+msgid "Bouquets"
+msgstr "Bukiety"
+
+msgid "Box Info"
+msgstr "O tunerze"
+
+msgid "Box"
+msgstr "Odbiornik"
+
+msgid "Box Control"
+msgstr "Sterowanie"
+
+msgid "Box Uptime"
+msgstr "Czas pracy odbornika"
+
+msgid "Brand"
+msgstr "Marka"
+
+msgid "Capacity"
+msgstr "Pojemność"
+
+msgid "Channel"
+msgstr "Kanał"
+
+msgid "Channels"
+msgstr "Kanały"
+
+msgid "Chipset"
+msgstr ""
+
+msgid "Cleanup Timers"
+msgstr "Wyczyść timery"
+
+msgid "Contributors"
+msgstr "Współpracownicy"
+
+msgid "Control"
+msgstr "Sterowanie"
+
+msgid "Current"
+msgstr "Aktualny"
+
+msgid "Current Event"
+msgstr "Aktualne wydarzenie"
+
+msgid "Deep-Standby"
+msgstr "Głębokie czuwanie"
+
+msgid "Default"
+msgstr "Domyślny"
+
+msgid "Delete Movie"
+msgstr "Usuń"
+
+msgid "Really delete the movie"
+msgstr "Czy na pewno usunąć"
+
+msgid "Delete Timer"
+msgstr "Usuń timer"
+
+msgid "Really delete the timer"
+msgstr "Czy na pewno usunąć timer"
+
+msgid "Description"
+msgstr "Opis"
+
+msgid "DHCP"
+msgstr ""
+
+msgid "Disable Timer"
+msgstr "Wyłącz timer"
+
+msgid "Dolby"
+msgstr ""
+
+msgid "Done"
+msgstr "Zrobione"
+
+msgid "Download"
+msgstr "Pobierz"
+
+msgid "Download Playlist for"
+msgstr "Pobierz listę odtwarzania"
+
+msgid "Duration"
+msgstr "Czas trwania"
+
+msgid "Edit Timer"
+msgstr "Edycja timera"
+
+msgid "Enable Timer"
+msgstr "Włącz timer"
+
+msgid "End"
+msgstr "Koniec"
+
+msgid "Enabled"
+msgstr "Włączony"
+
+msgid "Encrypted"
+msgstr "Zakodowany"
+
+msgid "EPG"
+msgstr ""
+
+msgid "Epg Search"
+msgstr "Wyszukaj w EPG"
+
+msgid "Error"
+msgstr "Błąd"
+
+msgid "Every"
+msgstr "Każdy"
+
+msgid "Extras"
+msgstr "Dodatki"
+
+msgid "finished"
+msgstr "zakończony"
+
+msgid "Firmware version"
+msgstr "Wersja oprogramowania"
+
+msgid "Frontprocessor Version"
+msgstr "Wersja frontprocesora"
+
+msgid "Free"
+msgstr "Wolne"
+
+msgid "Free Memory"
+msgstr "Dostępna pamięć"
+
+msgid "Gateway"
+msgstr "Brama"
+
+msgid "Grab Screenshot"
+msgstr "Wykonaj zrzut ekranu"
+
+msgid "Gui version"
+msgstr "Wersja GUI"
+
+msgid "Hide full remote"
+msgstr "Ukryj 'pełnego' pilota"
+
+msgid "High Resolution"
+msgstr "Wysoka rozdzielczość"
+
+msgid "Hard disk model"
+msgstr "Model dysku"
+
+msgid "Hour"
+msgstr "Godzina"
+
+msgid "IP address"
+msgstr "Adres IP"
+
+msgid "Infos"
+msgstr "Informacje"
+
+msgid "Instant Record"
+msgstr "Natychmiastowe nagrywanie"
+
+msgid "Javascript Libraries"
+msgstr ""
+
+msgid "Just play"
+msgstr "Tylko przełącz"
+
+msgid "Kernel version"
+msgstr "Wersja kernela"
+
+msgid "LICENSE"
+msgstr "LICENCJA"
+
+msgid "loading"
+msgstr "ładowanie"
+
+msgid "Location"
+msgstr "Lokalizacja"
+
+msgid "Locked"
+msgstr "Zablokowany"
+
+msgid "MAC address"
+msgstr "Adres MAC"
+
+msgid "Main"
+msgstr "Menu główne"
+
+msgid "Minute"
+msgstr "Minuta"
+
+msgid "Model"
+msgstr ""
+
+msgid "Movielist"
+msgstr "Lista nagrań"
+
+msgid "Movies"
+msgstr "Nagrania"
+
+msgid "MultiEPG"
+msgstr ""
+
+msgid "Name"
+msgstr "Nazwa"
+
+msgid "Namespace"
+msgstr ""
+
+msgid "Network Interface"
+msgstr "Interfejs sieciowy"
+
+msgid "no description available"
+msgstr "brak opisu"
+
+msgid "Sorry this page is not yet implemented"
+msgstr "Przepraszamy, strona jeszcze nie jest gotowa"
+
+msgid "Nothing"
+msgstr "Nic"
+
+msgid "Nothing playing."
+msgstr "Nic nie uruchomiono"
+
+msgid "Now"
+msgstr "Teraz"
+
+msgid "On"
+msgstr "Włącz"
+
+msgid "Open Source Web Interface for Linux set-top box"
+msgstr "OpenSource Web Interface dla tunerów linuksowych"
+
+msgid "OSD"
+msgstr ""
+
+msgid "Playlist"
+msgstr "Lista odtwarzania"
+
+msgid "Power Control"
+msgstr "Sterowanie zasilaniem"
+
+msgid "Provider"
+msgstr "Nadawca"
+
+msgid "Providers"
+msgstr "Nadawcy"
+
+msgid "Radio"
+msgstr ""
+
+msgid "Reboot Box"
+msgstr "Restart obiornika"
+
+msgid "Recording Status"
+msgstr "Status nagrywania"
+
+msgid "Refresh"
+msgstr "Odśwież"
+
+msgid "Refresh automatically every"
+msgstr "Automatyczne odświeżanie co"
+
+msgid "Remote"
+msgstr "Pilot"
+
+msgid "Repeated"
+msgstr "Powtarzalny"
+
+msgid "Restart GUI"
+msgstr "Restart GUI"
+
+msgid "running"
+msgstr "trwa"
+
+msgid "Satellites"
+msgstr "Satelity"
+
+msgid "Satfinder"
+msgstr "Miernik sygnału SAT"
+
+msgid "Screenshot"
+msgstr "Zrzut ekranu"
+
+msgid "Search"
+msgstr "Szukaj"
+
+msgid "Search IMDb"
+msgstr "Przeszukaj IMDb"
+
+msgid "seconds"
+msgstr "sekundy"
+
+msgid "Send Message"
+msgstr "Wyślij wiadomość"
+
+msgid "Send a Message"
+msgstr "Wyślij wiadomość"
+
+msgid "Service"
+msgstr "Kanał"
+
+msgid "Settings"
+msgstr "Ustawienia"
+
+msgid "(shift + click for long pressure)"
+msgstr "(SHIFT + przycisk = długie naciśnięcie)"
+
+msgid "Show Full OpenWebif"
+msgstr "Pokaż pełny interfejs"
+
+msgid "Show full remote"
+msgstr "Użyj 'pełnego' pilota"
+
+msgid "Show EPG for"
+msgstr "Pokaż EPG dla"
+
+msgid "Shutdown"
+msgstr "Wyłącz"
+
+msgid "Site and sources"
+msgstr "Strona www i kod źródłowy"
+
+msgid "SNR"
+msgstr ""
+
+msgid "Software"
+msgstr "Oprogramowanie"
+
+msgid "Standby"
+msgstr "Tryb czuwania"
+
+msgid "Standby Toggle"
+msgstr "Czuwanie / Wybudzanie"
+
+msgid "Start time is after end time"
+msgstr "Czas rozpoczęcia po czasie zakończenia"
+
+msgid "Start Instant Record"
+msgstr "Rozpocznij natychmiastowe nagrywanie"
+
+msgid "Stream"
+msgstr "Streaming"
+
+msgid "Subnet mask"
+msgstr "Maska podsieci"
+
+msgid "Subservices"
+msgstr "Subserwisy"
+
+msgid "Tags"
+msgstr "Tagi"
+
+msgid "Teletext"
+msgstr ""
+
+msgid "Television"
+msgstr "Telewizja"
+
+msgid "Template Engine"
+msgstr ""
+
+msgid "Text"
+msgstr "Tekst"
+
+msgid "Time"
+msgstr "Czas"
+
+msgid "Timeout"
+msgstr "Limit czasu"
+
+msgid "Timerlist"
+msgstr "Lista timerów"
+
+msgid "Timer"
+msgstr ""
+
+msgid "Timers"
+msgstr "Timery"
+
+msgid "Title"
+msgstr "Tytuł"
+
+msgid "Total Memory"
+msgstr "Całkowita pamięć"
+
+msgid "Tuner Bit Error Rate BER"
+msgstr "BER"
+
+msgid "Tuner Number (0-3)"
+msgstr "Numer tunera (0-3)"
+
+msgid "Tuner Signal"
+msgstr "Siła sygnału"
+
+msgid "Tuner Signal Quality SNR"
+msgstr "Jakość sygnału SNR"
+
+msgid "Tuner Signal Quality SNR_DB"
+msgstr "Jakość sygnału SNR_DB"
+
+msgid "Tuner Signal Power AGC"
+msgstr "Siła sygnału AGC"
+
+msgid "Tuner Type"
+msgstr "Typ tunera"
+
+msgid "Tuners"
+msgstr "Tunery"
+
+msgid "TV"
+msgstr "TV"
+
+msgid "TV Multi EPG"
+msgstr ""
+
+msgid "Type"
+msgstr "Typ"
+
+msgid "Upcoming Events"
+msgstr "Kolejne programy"
+
+msgid "Version"
+msgstr "Wersja"
+
+msgid "Video"
+msgstr ""
+
+msgid "Video Height"
+msgstr ""
+
+msgid "Video Wide"
+msgstr "Panoramiczny"
+
+msgid "Video Width"
+msgstr ""
+
+msgid "Volume"
+msgstr "Głośność"
+
+msgid "Volume Control"
+msgstr "Głośność"
+
+msgid "waiting"
+msgstr "oczekiwanie"
+
+msgid "Warning"
+msgstr "Ostrzeżenie"
+
+msgid "Yes/No"
+msgstr "Tak/Nie"
+
+msgid "Zap"
+msgstr "Przełącz"
+
+msgid "zap before Stream"
+msgstr "Przed uruchomieniem streamingu przełączaj na dany kanał"
+
+msgid "Zap to"
+msgstr "Przełącz na"
+
+#, python-format
+msgid "Missing mandatory parameter '%s'"
+msgstr "Brak wymaganego parametru '%s'"
+
+#, python-format
+msgid "The parameter '%s' can't be empty"
+msgstr "Parametr '%s' nie może być pusty"
+
+#, python-format
+msgid "Wrong parameter format 'set=%s'. Use set=set15 "
+msgstr "Zły format parametru 'set =% s'. Użyj set= set15"
+
+#, python-format
+msgid "Unknown Volume command %s"
+msgstr "Nieznana komenda głośności %s"
+
+msgid "The parameter 'command' must be a number"
+msgstr "Parametr 'command' musi być liczbą"
+
+#, python-format
+msgid "type %s is not a number"
+msgstr "%s nie jest liczbą"
+
+msgid "New"
+msgstr "Nowy"
+
+msgid "Services"
+msgstr "Kanały"
+
+msgid "Cable"
+msgstr "Kablowy"
+
+msgid "Terrestrial"
+msgstr "DVB-T"
+
+msgid "W"
+msgstr "W"
+
+msgid "E"
+msgstr "O"

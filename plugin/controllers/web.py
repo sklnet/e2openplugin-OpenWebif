@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 ##############################################################################
 #                        2011 E2OpenPlugins                                  #
 #                                                                            #
@@ -6,6 +8,8 @@
 #               published by the Free Software Foundation.                   #
 #                                                                            #
 ##############################################################################
+
+from Plugins.Extensions.OpenWebif.__init__ import _
 
 from Components.config import config
 
@@ -41,13 +45,13 @@ class WebController(BaseController):
 			if key not in request.args.keys():
 				return {
 					"result": False,
-					"message": "Missing mandatory parameter '%s'" % key
+					"message": _("Missing mandatory parameter '%s'") % key
 				}
 		
 			if len(request.args[key][0]) == 0:
 				return {
 					"result": False,
-					"message": "The parameter '%s' can't be empty" % key
+					"message": _("The parameter '%s' can't be empty") % key
 				}
 		
 		return None
@@ -85,12 +89,12 @@ class WebController(BaseController):
 			except Exception, e:
 				res = getVolumeStatus()
 				res["result"] = False
-				res["message"] = "Wrong parameter format 'set=%s'. Use set=set15 " % request.args["set"][0]
+				res["message"] = _("Wrong parameter format 'set=%s'. Use set=set15 ") % request.args["set"][0]
 				return rets
 				
 		res = getVolumeStatus()
 		res["result"] = False
-		res["message"] = "Unknown Volume command %s" % request.args["set"][0]
+		res["message"] = _("Unknown Volume command %s") % request.args["set"][0]
 		return res
 		
 	def P_getaudiotracks(self, request):
@@ -125,7 +129,7 @@ class WebController(BaseController):
 		except Exception, e:
 			return {
 				"result": False,
-				"message": "The parameter 'command' must be a number"
+				"message": _("The parameter 'command' must be a number")
 			}
 			
 		type = ""
@@ -237,7 +241,7 @@ class WebController(BaseController):
 		except Exception, e:
 			return {
 				"result": False,
-				"message": "type %s is not a number" % request.args["type"][0]
+				"message": _("type %s is not a number") % request.args["type"][0]
 			}
 			
 		timeout = -1
@@ -261,7 +265,7 @@ class WebController(BaseController):
 		if "dirname" in request.args.keys():
 			dirname = request.args["dirname"][0]
 			
-		return getMovieList(dirname, tag)
+		return getMovieList(dirname, tag, request.args)
 
 	def P_movielisthtml(self, request):
 		tag = None
@@ -336,6 +340,25 @@ class WebController(BaseController):
 	def P_gettags(self, request):
 		return getMovieTags()
 	
+# VPS Plugin
+	def vpsparams(self, request):
+		vpsplugin_enabled = None
+		if "vpsplugin_enabled" in request.args:
+			vpsplugin_enabled = True if request.args["vpsplugin_enabled"][0] == '1' else False
+		vpsplugin_overwrite = None
+		if "vpsplugin_overwrite" in request.args:
+			vpsplugin_overwrite = True if request.args["vpsplugin_overwrite"][0] == '1' else False
+		vpsplugin_time = None
+		if "vpsplugin_time" in request.args:
+			vpsplugin_time = int(float(request.args["vpsplugin_time"][0]))
+			if vpsplugin_time == -1:
+				vpsplugin_time = None
+		return { 
+			"vpsplugin_time":vpsplugin_time,
+			"vpsplugin_overwrite":vpsplugin_overwrite,
+			"vpsplugin_enabled":vpsplugin_enabled
+			}
+
 	def P_timerlist(self, request):
 		ret = getTimers(self.session)
 		ret["locations"] = config.movielist.videodirs.value
@@ -386,7 +409,8 @@ class WebController(BaseController):
 			afterevent,
 			dirname,
 			tags,
-			repeated
+			repeated,
+			self.vpsparams(request)
 		)
 		
 	def P_timeraddbyeventid(self, request):
@@ -421,6 +445,7 @@ class WebController(BaseController):
 			justplay,
 			dirname,
 			tags,
+			self.vpsparams(request)
 		)
 
 	def P_timerchange(self, request):
@@ -487,7 +512,8 @@ class WebController(BaseController):
 			repeated,
 			request.args["channelOld"][0],
 			beginOld,
-			endOld
+			endOld,
+			self.vpsparams(request)
 		)
 		
 	def P_timertogglestatus(self, request):
@@ -685,7 +711,7 @@ class WebController(BaseController):
 			}
 			
 		return getSearchSimilarEpg(request.args["sRef"][0], eventid)
-		
+	
 	def P_getcurrent(self, request):
 		info = getCurrentService(self.session)
 		now = getNowNextEpg(info["ref"], 0)
@@ -724,9 +750,27 @@ class WebController(BaseController):
 				"remaining": 0,
 				"provider": ""
 			}
+		# replace EPG NOW with Movie info
+		mnow = now
+		if mnow["sref"].startswith('1:0:0:0:0:0:0:0:0:0:/'):
+			try:
+				service = self.session.nav.getCurrentService()
+				minfo = service and service.info()
+				movie = minfo and minfo.getEvent(0)
+				if movie and minfo:
+					mnow["title"] = movie.getEventName()
+					mnow["shortdesc"] = movie.getShortDescription()
+					mnow["longdesc"] = movie.getExtendedDescription()
+					mnow["begin_timestamp"] = movie.getBeginTime()
+					mnow["duration_sec"] = movie.getDuration()
+					mnow["remaining"] = movie.getDuration()
+					mnow["id"] = movie.getEventId()
+			except Exception, e:
+				mnow = now
+		
 		return {
 			"info": info,
-			"now": now,
+			"now": mnow,
 			"next": next
 		}
 		

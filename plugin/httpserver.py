@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 ##############################################################################
 #                        2011 E2OpenPlugins                                  #
 #                                                                            #
@@ -11,12 +13,12 @@ from enigma import eEnv
 from Components.config import config
 from Tools.Directories import fileExists
 from twisted.internet import reactor, ssl
-from twisted.web import server, http, static, resource, error
+from twisted.web import server, http, static, resource, error, version
 from twisted.internet.error import CannotListenError
 
 from controllers.root import RootController
 from sslcertificate import SSLCertificateGenerator, KEY_FILE, CERT_FILE
-from socket import gethostname
+from socket import gethostname, has_ipv6
 
 import os
 import imp
@@ -108,7 +110,6 @@ def HttpdStart(session):
 		global listener
 		port = config.OpenWebif.port.value
 
-
 		root = buildRootTree(session)
 		if config.OpenWebif.auth.value == True:	
 			root = AuthResource(session, root)
@@ -116,10 +117,14 @@ def HttpdStart(session):
 		
 		# start http webserver on configured port
 		try:
-			listener.append( reactor.listenTCP(port, site) )
-#			if socket.has_ipv6 and fileExists('/proc/net/if_inet6'):
-#				listener.append( reactor.listenTCP(port, site, interface='::') )			
+			if has_ipv6 and fileExists('/proc/net/if_inet6') and version.major >= 12:
+				# use ipv6
+				listener.append( reactor.listenTCP(port, site, interface='::') )
+			else:
+				# ipv4 only
+				listener.append( reactor.listenTCP(port, site) )
 			print "[OpenWebif] started on %i"% (port)
+			BJregisterService('http',port)
 		except CannotListenError:
 			print "[OpenWebif] failed to listen on Port %i" % (port)
 
@@ -129,10 +134,14 @@ def HttpdStart(session):
 			# start https webserver on port configured port
 			try:
 				context = ssl.DefaultOpenSSLContextFactory(KEY_FILE, CERT_FILE)
-				listener.append( reactor.listenSSL(httpsPort, site, context) )
-#				if socket.has_ipv6 and fileExists('/proc/net/if_inet6'):
-#					listener.append( reactor.listenSSL(httpsPort, site, context, interface='::') )
+				if has_ipv6 and fileExists('/proc/net/if_inet6') and version.major >= 12:
+					# use ipv6
+					listener.append( reactor.listenSSL(httpsPort, site, context, interface='::') )
+				else:
+					# ipv4 only
+					listener.append( reactor.listenSSL(httpsPort, site, context) )
 				print "[OpenWebif] started on", httpsPort
+				BJregisterService('https',httpsPort)
 			except CannotListenError:
 				print "[OpenWebif] failed to listen on Port", httpsPort
 			except: # THIS EXCEPTION IS ONLY CATCHED WHEN CERT FILES ARE BAD ( look below for error )
@@ -161,9 +170,12 @@ def HttpdStart(session):
 				root = buildRootTree(session)
 				site = server.Site(root)
 				try:
-					listener.append( reactor.listenTCP(80, site, interface='127.0.0.1') )
-#					if socket.has_ipv6 and fileExists('/proc/net/if_inet6'):
-#						listener.append( reactor.listenTCP(80, site, interface='::1') )
+					if has_ipv6 and fileExists('/proc/net/if_inet6') and version.major >= 12:
+						# use ipv6
+						listener.append( reactor.listenTCP(80, site, interface='::1') )
+					else:
+						# ipv4 only
+						listener.append( reactor.listenTCP(80, site, interface='127.0.0.1') )
 					print "[OpenWebif] started stream listening on port 80"
 				except CannotListenError:
 					print "[OpenWebif] port 80 busy"
@@ -187,7 +199,7 @@ class AuthResource(resource.Resource):
 			
 		if self.login(request.getUser(), request.getPassword()) == False:
 			request.setHeader('WWW-authenticate', 'Basic realm="%s"' % ("OpenWebif"))
-			errpage = error.ErrorPage(http.UNAUTHORIZED,"Unauthorized","401 Authentication required")
+			errpage = resource.ErrorPage(http.UNAUTHORIZED,"Unauthorized","401 Authentication required")
 			return errpage.render(request)
 		else:
 			return self.resource.render(request)
@@ -204,7 +216,7 @@ class AuthResource(resource.Resource):
 			
 		if self.login(request.getUser(), request.getPassword()) == False:
 			request.setHeader('WWW-authenticate', 'Basic realm="%s"' % ("OpenWebif"))
-			errpage = error.ErrorPage(http.UNAUTHORIZED,"Unauthorized","401 Authentication required")
+			errpage = resource.ErrorPage(http.UNAUTHORIZED,"Unauthorized","401 Authentication required")
 			return errpage
 		else:
 			session["logged"] = True
@@ -277,3 +289,14 @@ def installCertificates(session):
 		config.OpenWebif.https_enabled.save()
 		# Inform the user
 		session.open(MessageBox, "Cannot install generated SSL-Certifactes for https access\nHttps access is disabled!", MessageBox.TYPE_ERROR)
+# BJ
+def BJregisterService(protocol, port):
+	try:
+		from Plugins.Extensions.Bonjour.Bonjour import bonjour
+		service = bonjour.buildService(protocol, port, 'OpenWebif')
+		bonjour.registerService(service, True)
+		return True
+
+	except ImportError, e:
+		return False
+

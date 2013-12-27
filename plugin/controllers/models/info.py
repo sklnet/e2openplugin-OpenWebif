@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 ##############################################################################
 #                        2011 E2OpenPlugins                                  #
 #                                                                            #
@@ -17,15 +19,18 @@ from Screens.Standby import inStandby
 from Tools.Directories import fileExists, pathExists
 from time import time, localtime, strftime
 from enigma import eDVBVolumecontrol, eServiceCenter, eServiceReference
-try: 
-	getDistro, getBoxType
-except: pass
+try:
+	from enigma import getDistro, getBoxType, getMachineName
+except:
+	pass
+
+import NavigationInstance
 
 import os
 import sys
 import time
 
-OPENWEBIFVER = "OWIF 0.2.1"
+OPENWEBIFVER = "OWIF 0.2.6"
 
 def getOpenWebifVer():
 	return OPENWEBIFVER
@@ -111,6 +116,8 @@ def getInfo():
 				file = open("/proc/stb/info/gbmodel")
 				model = file.read().strip().lower()
 				file.close()
+				if model == "quad":
+					model = "gbquad"
 			else:
 				model = 'gb800solo'
 		elif model.startswith("et"):
@@ -136,6 +143,14 @@ def getInfo():
 					model
 			elif model.endswith("ru"):
 				brand = "Sezam"
+				if model == "ini-1000ru":
+					model = "Sezam 1000-HD"
+				elif model == "ini-5000ru":
+					model = "Sezam 5000-HD"
+				elif model == "ini-9000ru":
+					model = "Sezam Marvel"
+				else:
+					model
 			else:
 				brand = "Venton"
 		elif model == "xp1000":
@@ -152,6 +167,9 @@ def getInfo():
 			elif getBoxType() == 'odinm6':
 				brand = "TELESTAR"
 				model = "STARSAT LX"
+			elif getMachineName() == 'AX-Odin':
+				brand = "Opticum"
+				model = "AX-Odin"	
 			else:
 				brand = "Odin-Series"
 		elif model == "e3hd":
@@ -191,7 +209,7 @@ def getInfo():
 	else:
 		file = open("/proc/stb/info/model")
 		model = file.read().strip().lower()
- 		if model == "spark" or model == "spark7162":
+ 		if model.startswith('spar'):
 		    brand = "Spark"
 		file.close()
 
@@ -354,8 +372,8 @@ def getStatusInfo(self):
 		statusinfo['currservice_begin'] = strftime("%H:%M", (localtime(int(curEvent[0])+(config.recording.margin_before.getValue()*60))))
 		statusinfo['currservice_end'] = strftime("%H:%M", (localtime(int(curEvent[1])-(config.recording.margin_after.getValue()*60))))
 		statusinfo['currservice_description'] = curEvent[3]
-		if len(curEvent[3]) > 220:
-			statusinfo['currservice_description'] = curEvent[3][0:220] + "..."
+		if len(curEvent[3].decode('utf-8')) > 220:
+			statusinfo['currservice_description'] = curEvent[3].decode('utf-8')[0:220].encode('utf-8') + "..."
 		statusinfo['currservice_station'] = serviceHandlerInfo.getName(serviceref).replace('\xc2\x86', '').replace('\xc2\x87', '')
 	else:
 		statusinfo['currservice_name'] = "N/A"
@@ -367,10 +385,18 @@ def getStatusInfo(self):
 			statusinfo['currservice_station'] = serviceHandlerInfo.getName(serviceref).replace('\xc2\x86', '').replace('\xc2\x87', '')
 
 	# Get Standby State
+	from Screens.Standby import inStandby
 	if inStandby == None:
 		statusinfo['inStandby'] = "false"
 	else:
 		statusinfo['inStandby'] = "true"
+
+	# Get recording state
+	recs = NavigationInstance.instance.getRecordings()
+	if recs:
+		statusinfo['isRecording'] = "true"
+	else:
+		statusinfo['isRecording'] = "false"
 
 	return statusinfo
 

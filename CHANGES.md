@@ -1,3 +1,38 @@
+## Version 0.2.6
+**FEATURES**
+
+* add translation support
+* display standby / recording state in header
+
+**FIXES**
+* improve current info while movie playing
+* fix standby state info
+* fix currently playing info at header
+
+## Version 0.2.5
+**FEATURES**
+
+* support movielist subfolders
+* support movielist zip dump
+* support vps plugin api
+
+## Version 0.2.4
+**FEATURES**
+
+* support multiple DVB streams at the same time
+
+## Version 0.2.3
+**FEATURES**
+
+* add API to use STB as WOL "client" to send MagicPackets
+* add API for WOLSetup plugin
+
+## Version 0.2.2
+**FEATURES**
+
+* add API for transcoding plugin
+
+
 ## Version 0.2.1
 **FEATURES**
 

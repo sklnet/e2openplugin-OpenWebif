@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 ##############################################################################
 #                        2011 E2OpenPlugins                                  #
 #                                                                            #
@@ -16,7 +18,7 @@ from enigma import eServiceCenter, eServiceReference, iServiceInformation, eEPGC
 from time import time, localtime, strftime, mktime
 from info import getPiconPath, GetWithAlternative
 from urllib import quote, unquote
-
+from Plugins.Extensions.OpenWebif.local import tstrings #using the tstrings dic is faster than translating with _ func from __init__
 
 try:
 	from collections import OrderedDict
@@ -105,12 +107,14 @@ def getCurrentFullInfo(session):
 		ref = None
 
 	if ref is not None:
+		inf['sref'] = '_'.join(ref.split(':', 10)[:10])
 		inf['picon'] = getPicon(ref)
 		inf['wide'] = inf['aspect'] in (3, 4, 7, 8, 0xB, 0xC, 0xF, 0x10)
 		inf['ttext'] = getServiceInfoString(info, iServiceInformation.sTXTPID)
 		inf['crypt'] = getServiceInfoString(info, iServiceInformation.sIsCrypted)
 		inf['subs'] = str(subservices and subservices.getNumberOfSubservices() > 0 )
 	else:
+		inf['sref'] = None
 		inf['picon'] = None
 		inf['wide'] = None
 		inf['ttext'] = None
@@ -456,51 +460,65 @@ def getEvent(ref, idev):
 
 
 def getChannelEpg(ref, begintime=-1, endtime=-1):
-	ref = unquote(ref)
 	ret = []
 	ev = {}
-	picon = getPicon(ref)
-	epgcache = eEPGCache.getInstance()
-	events = epgcache.lookupEvent(['IBDTSENC', (ref, 0, begintime, endtime)])
-	if events is not None:
-		for event in events:
-			ev = {}
-			ev['picon'] = picon
-			ev['id'] = event[0]
-			if event[1]:
-				ev['date'] = strftime("%a %d.%b.%Y", (localtime(event[1])))
-				ev['begin'] = strftime("%H:%M", (localtime(event[1])))
-				ev['begin_timestamp'] = event[1]
-				ev['duration'] = int(event[2] / 60)
-				ev['duration_sec'] = event[2]
-				ev['end'] = strftime("%H:%M",(localtime(event[1] + event[2])))
-				ev['title'] = filterName(event[3])
-				ev['shortdesc'] = event[4]
-				ev['longdesc'] = event[5]
-				ev['sref'] = ref
-				ev['sname'] = filterName(event[6])
-				ev['tleft'] = int (((event[1] + event[2]) - event[7]) / 60)
-				if ev['duration_sec'] == 0:
-					ev['progress'] = 0
+	use_empty_ev = False
+	if ref:
+		ref = unquote(ref)
+
+		# When quering EPG we dont need URL, also getPicon doesn't like URL
+		if "://" in ref:
+			ref = ":".join(ref.split(":")[:10]) + "::" + ref.split(":")[-1]
+
+		picon = getPicon(ref)
+		epgcache = eEPGCache.getInstance()
+		events = epgcache.lookupEvent(['IBDTSENC', (ref, 0, begintime, endtime)])
+		if events is not None:
+			for event in events:
+				ev = {}
+				ev['picon'] = picon
+				ev['id'] = event[0]
+				if event[1]:
+					ev['date'] = "%s %s" % (tstrings[("day_" + strftime("%w", (localtime(event[1]))))], strftime("%d.%m.%Y", (localtime(event[1]))))
+					ev['begin'] = strftime("%H:%M", (localtime(event[1])))
+					ev['begin_timestamp'] = event[1]
+					ev['duration'] = int(event[2] / 60)
+					ev['duration_sec'] = event[2]
+					ev['end'] = strftime("%H:%M",(localtime(event[1] + event[2])))
+					ev['title'] = filterName(event[3])
+					ev['shortdesc'] = event[4]
+					ev['longdesc'] = event[5]
+					ev['sref'] = ref
+					ev['sname'] = filterName(event[6])
+					ev['tleft'] = int (((event[1] + event[2]) - event[7]) / 60)
+					if ev['duration_sec'] == 0:
+						ev['progress'] = 0
+					else:
+						ev['progress'] = int(((event[7] - event[1]) * 100 / event[2]) *4)
+					ev['now_timestamp'] = event[7]
+					ret.append(ev)
 				else:
-					ev['progress'] = int(((event[7] - event[1]) * 100 / event[2]) *4)
-				ev['now_timestamp'] = event[7]
-			else:
-				ev['date'] = 0
-				ev['begin'] = 0
-				ev['begin_timestamp'] = 0
-				ev['duration'] = 0
-				ev['duration_sec'] = 0
-				ev['end'] = 0
-				ev['title'] = "N/A"
-				ev['shortdesc'] = ""
-				ev['longdesc'] = ""
-				ev['sref'] = ref
-				ev['sname'] = filterName(event[6])
-				ev['tleft'] = 0
-				ev['progress'] = 0
-				ev['now_timestamp'] = 0
-			ret.append(ev)
+					use_empty_ev = True
+					ev['sref'] = ref
+	else:
+		use_empty_ev = True
+		ev['sref'] = ""
+		
+	if use_empty_ev:
+		ev['date'] = 0
+		ev['begin'] = 0
+		ev['begin_timestamp'] = 0
+		ev['duration'] = 0
+		ev['duration_sec'] = 0
+		ev['end'] = 0
+		ev['title'] = "N/A"
+		ev['shortdesc'] = ""
+		ev['sname'] = ""
+		ev['longdesc'] = ""
+		ev['tleft'] = 0
+		ev['progress'] = 0
+		ev['now_timestamp'] = 0
+		ret.append(ev)
 
 	return { "events": ret, "result": True }
 
@@ -618,7 +636,7 @@ def getSearchEpg(sstr):
 		for event in events:
 			ev = {}
 			ev['id'] = event[0]
-			ev['date'] = strftime("%a %d.%b.%Y", (localtime(event[1])))
+			ev['date'] = "%s %s" % (tstrings[("day_" + strftime("%w", (localtime(event[1]))))], strftime("%d.%m.%Y", (localtime(event[1]))))
 			ev['begin_timestamp'] = event[1]
 			ev['begin'] = strftime("%H:%M", (localtime(event[1])))
 			ev['duration_sec'] = event[2]
@@ -645,7 +663,7 @@ def getSearchSimilarEpg(ref, eventid):
 		for event in events:
 			ev = {}
 			ev['id'] = event[0]
-			ev['date'] = strftime("%a %d.%b.%Y", (localtime(event[1])))
+			ev['date'] = "%s %s" % (tstrings[("day_" + strftime("%w", (localtime(event[1]))))], strftime("%d.%m.%Y", (localtime(event[1]))))
 			ev['begin_timestamp'] = event[1]
 			ev['begin'] = strftime("%H:%M", (localtime(event[1])))
 			ev['duration_sec'] = event[2]
@@ -736,8 +754,12 @@ def getMultiEpg(self, ref, begintime=-1, endtime=None):
 
 	return { "events": ret, "result": True, "picons": picons }
 
-
 def getPicon(sname):
+	# remove URL part
+	if ("://" in sname) or ("%3a//" in sname) or ("%3A//" in sname):
+		sname = unquote(sname)
+		sname = ":".join(sname.split(":")[:10]) + "::" + sname.split(":")[-1]
+
 	sname = GetWithAlternative(sname)
 	if sname is not None:
 		pos = sname.rfind(':')
@@ -749,6 +771,14 @@ def getPicon(sname):
 	filename = getPiconPath() + sname
 	if fileExists(filename):
 		return "/picon/" + sname
+	fields = sname.split('_', 3)
+	if len(fields) > 2 and fields[2] != '2':
+		#fallback to 1 for tv services with nonstandard servicetypes
+		fields[2] = '1'
+		sname='_'.join(fields)
+		filename = getPiconPath() + sname
+		if fileExists(filename):
+			return "/picon/" + sname
 	return "/images/default_picon.png"
 
 def getParentalControlList():

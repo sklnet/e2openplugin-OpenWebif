@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 ##############################################################################
 #                        2011 E2OpenPlugins                                  #
 #                                                                            #
@@ -9,8 +11,12 @@
 
 from Tools.Directories import fileExists
 from Components.config import config
-from enigma import getBoxType
-
+try:
+	from enigma import getBoxType, getMachineName
+except:
+	pass
+	
+from enigma import eEnv
 from models.services import getCurrentService, getBouquets, getChannels, getSatellites, getProviders, getEventDesc, getChannelEpg, getSearchEpg, getCurrentFullInfo, getMultiEpg, getEvent
 from models.info import getInfo, getPublicPath, getOpenWebifVer
 from models.movies import getMovieList
@@ -18,6 +24,7 @@ from models.timers import getTimers
 from models.config import getConfigs, getConfigsSections
 from base import BaseController
 from time import mktime, localtime
+from os import path
 
 class AjaxController(BaseController):
 	def __init__(self, session, path = ""):
@@ -59,7 +66,7 @@ class AjaxController(BaseController):
 		info = getInfo()
 		model = info["model"]
 		channels['transcoding'] = False
-		if model in ("solo2", "duo2"): 
+		if model in ("solo2", "duo2", "Sezam Marvel", "Xpeed LX3", "gbquad", "gbquadplus") and path.exists(eEnv.resolve('${libdir}/enigma2/python/Plugins/SystemPlugins/TransCodingSetup/plugin.pyo')): 
 			channels['transcoding'] = True
 		return channels
 
@@ -98,6 +105,8 @@ class AjaxController(BaseController):
 			model = "e3hd"
 		elif getBoxType() == 'odinm6':
 			model = "starsatlx"
+		elif getMachineName() == 'AX-Odin':
+			model = "axodin"
 		elif model == "MixOs F5":
 			model = "ebox5000"
 		elif model == "MixOs F5mini":
@@ -143,6 +152,12 @@ class AjaxController(BaseController):
 				model = "xpeedlx1"
 		elif model == 'Xpeed LX3':
 			model = "xpeedlx3"
+		elif model == 'Sezam 1000-HD':
+			model = "sezam-1000"
+		elif model == 'Sezam 5000-HD':
+			model = "sezam-5000"
+		elif model == 'Sezam 1000-HD':
+			model = "sezam-9000"
 		if fileExists(getPublicPath("/images/boxes/" + model + ".jpg")):
 			info["boximage"] = model + ".jpg"
 		else:
@@ -186,6 +201,11 @@ class AjaxController(BaseController):
 			movies = getMovieList(request.args["dirname"][0])
 		else:
 			movies = getMovieList()
+		info = getInfo()
+		model = info["model"]
+		movies['transcoding'] = False
+		if model in ("solo2", "duo2", "Sezam Marvel", "Xpeed LX3", "gbquad", "gbquadplus") and path.exists(eEnv.resolve('${libdir}/enigma2/python/Plugins/SystemPlugins/TransCodingSetup/plugin.pyo')):
+			movies['transcoding'] = True
 		return movies
 
 	def P_workinprogress(self, request):
@@ -242,6 +262,9 @@ class AjaxController(BaseController):
 		
 		return epg
 	def P_multiepg2(self, request):
+		reloadtimer = 0
+		if "reloadtimer" not in request.args.keys():
+			reloadtimer = 1
 		bouq = getBouquets("tv")
 		if "bref" not in request.args.keys():
 			bref = bouq['bouquets'][0][0]
@@ -264,5 +287,6 @@ class AjaxController(BaseController):
 		epg['bouquets'] = bouq['bouquets']
 		epg['bref'] = bref
 		epg['day'] = day
+		epg['reloadtimer'] = reloadtimer
 		
 		return epg
