@@ -224,7 +224,7 @@ class BaseController(resource.Resource):
 			ret["remote"] = "xp1000"
 		elif ret["box"] == "odinm9":
 			ret["remote"] = "odinm9"
-		elif getBoxType() == 'odinm6' or getMachineName() == 'AX-Odin':
+		elif ret["box"] == 'odinm6':
 			ret["remote"] = "starsatlx"
 		elif ret["box"] == "odinm7":
 			ret["remote"] = "odinm7"
